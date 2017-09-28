@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Main</title>
+  <style>
+    html {
+      background-color: yellow;
+    }
+    head,
+    body {
+      padding: 0;
+      margin: 0;
+      text-align: center;
+      font-family: helvetica, arial, sans-serif;
+    }
+
+    .container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translate(-50%, -50%);
+    }
+
+    img {
+      max-height: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main"></div>
+  <script src="main.js"></script>
+  <script type="text/javascript">
+    var node = document.getElementById('main');
+    var app = Elm.Main.embed(node);
+
+    var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 5;
+    recognition.start();
+
+    recognition.onresult = function(event) {
+      var spell = event.results[0][0].transcript;
+      app.ports.spell.send(spell);
+    };
+
+    recognition.onend = function(event) {
+      recognition.start();
+    };
+  </script>
+</body>
+
+</html>
